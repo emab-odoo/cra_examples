@@ -12,7 +12,7 @@
     'depends':['sale_management'],
     'data':[
         'views/sale_views.xml',
-        'views/wizard.xml',
+        'wizards/cra_proof.xml',
         'security/ir.model.access.csv',
     ],
     'license': 'OPL-1',
