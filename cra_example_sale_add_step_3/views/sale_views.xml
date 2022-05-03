@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding='utf-8'?>
+<!-- Good practice -->
+<odoo>
+    <data>
+        <!-- Good practice: for the id try to use: companyName_originalViewExternalId_inherit -->
+        <record id="cra_view_order_form_inherit" model='ir.ui.view'>
+            <!-- Good practice: for the name try to use: companyName.originalViewExternalId.inherit -->
+            <field name="name">cra.view.order.form.inherit</field>
+            <!-- model that the view uses.-->
+            <field name="model">sale.order</field>
+            <!--External ID of the OG view.-->
+            <field name="inherit_id" ref="sale.view_order_form" />
+            <!--field type to search inside the original view using xpath-->
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_quotation_send']" position="replace">
+                    <button name="action_quotation_send" string="Send by Email" type="object" states="proof" class="btn-primary" data-hotkey="g" />
+                </xpath>
+                <xpath expr="//button[@name='action_confirm'][2]" position="replace">
+                    <button name="action_confirm" id="action_confirm" data-hotkey="v" string="Confirm" states="proof" class="btn-primary" type="object" attrs="{'invisible': [('state', 'not in', ['dratf'])]}" />
+                </xpath>
+                <!--Find the field with name state, and replace it with the field state with different statusbar_visible elements (proof is declared on the model.)-->
+                <xpath expr="//field[@name='state']" position="replace">
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,proof,sale" />
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+                    <field name="needs_proof" invisible='1'></field>
+                    <button name="proof_wizard" t-attf-class="o_cra_test" string="Proof" type="object" attrs="{'invisible':[('needs_proof','=', False)]}"></button>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
