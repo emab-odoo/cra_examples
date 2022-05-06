@@ -41,4 +41,6 @@ class CRAProof(models.Model):
 
     @api.depends('proof_image')
     def check_order_lines(self):
-        self.sale_order_line.order_id.check_if_proofs_ready()
+        self.sale_order_line.proof_ready = True
+        if(self.sale_order_line.order_id.needs_proof):
+            self.sale_order_line.order_id.check_if_proofs_ready()

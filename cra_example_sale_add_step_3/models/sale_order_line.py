@@ -14,6 +14,20 @@ class SaleOrderLine(models.Model):
                                  related='product_id.needs_proof')
     cra_proof = fields.One2many(comodel_name='cra.proof',
                                 inverse_name='sale_order_line')
+    proof_validated_by = fields.Char(
+        'Proof Signed By',
+        help='Name of the person that signed the SO.',
+        copy=False, store='True')
+    proof_validated_on = fields.Datetime('Proof Validated On',
+                                         help='Date of the signature.',
+                                         copy=False, store=True)
+    proof_validated = fields.Boolean('Is the Proof Validated',
+                                     copy=False,
+                                     default=False, store=True)
+
+    proof_ready = fields.Boolean('Ready for approval',
+                                 copy=False,
+                                 default=False, store=True)
 
     def proof_wizard(self):
         if not self.cra_proof:
