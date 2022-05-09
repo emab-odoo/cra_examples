@@ -29,6 +29,7 @@ class SaleOrder(models.Model):
     def check_if_so_needs_proof(self):
         res = False
         for line in self.order_line:
+
             if(line.needs_proof):
                 res = True
                 break
@@ -41,8 +42,6 @@ class SaleOrder(models.Model):
                 if not line.proof_ready:
                     proof_ready_to_send = False
                     break
-        if (proof_ready_to_send):
-            self.state = 'proof_sent'
         return proof_ready_to_send
 
     def proof_ready_for_approval(self):
@@ -53,7 +52,6 @@ class SaleOrder(models.Model):
         return True
 
     def proof_has_to_be_validated(self, include_draft=False):
-        print(self.proof_validated)
         if (self.proof_validated):
             return False
         for line in self.order_line:
@@ -71,17 +69,32 @@ class SaleOrder(models.Model):
         return sale_order_proof_validated
 
     def action_approve_quotation(self):
-        self.write({
-            'state': 'proof'
-        })
+        self.check_if_so_needs_proof()
+        if (self.needs_proof):
+            self.write({'state': 'proof'})
+        else:
+            self.action_confirm()
 
     def action_send_proof(self):
-        self.write({
-            'state': 'proof_sent'
-        })
+        self.write({'state': 'proof_sent'})
+        return self.action_quotation_send()
+
 
     def has_to_be_signed(self, include_draft=False):
-        return (self.state == 'proof_sent' or (self.state == 'draft' and include_draft)) and not self.is_expired and self.require_signature and not self.signature
+        allowed_states = ['proof_sent', 'proof']
+        if not self.needs_proof:
+            allowed_states = ['sent']
+        return (self.state in allowed_states or (self.state == 'draft' and include_draft)) and not self.is_expired and self.require_signature and not self.signature
+
+    def has_to_be_paid(self, include_draft=False):
+        allowed_states = ['proof_sent', 'proof']
+        if not self.needs_proof:
+            allowed_states = ['sent']
+        transaction = self.get_portal_last_transaction()
+        print(transaction)
+        return (
+            self.state in allowed_states or (self.state == 'draft' and include_draft)
+        ) and not self.is_expired and self.require_payment and transaction.state != 'done' and self.amount_total
 
     # Best practice but the above issue is present, if you want, uncomment it and try it for ur self.
 

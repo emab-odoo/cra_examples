@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, api, fields, _
+from odoo.exceptions import UserError
 
 
 class SaleOrderLine(models.Model):
@@ -38,3 +39,17 @@ class SaleOrderLine(models.Model):
                 }
                 self.cra_proof = self.env['cra.proof'].create(vals_list)
         return self.cra_proof.proof_wizard()
+
+    @api.ondelete(at_uninstall=False)
+    def _unlink_except_confirmed(self):
+        if(self.cra_proof):
+            self.cra_proof.unlink()
+        if not self.order_id.check_if_so_needs_proof():
+            self.order_id.write({
+                'state': 'sent'
+            })
+        if self._check_line_unlink():
+            print(self.state)
+            raise UserError(
+                _('You can not remove an order line once the sales order is confirmed.\nYou should rather set the quantity to 0.'
+                  ))

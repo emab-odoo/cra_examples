@@ -96,3 +96,33 @@ class CustomerPortal(portal.CustomerPortal):
             query_string += allow_payment
         return request.redirect(
             order_sudo.get_portal_url(query_string=query_string))
+
+    @http.route(['/my/orders/<int:order_id>/confirm_quotation'],
+                type='http',
+                auth="public",
+                website=True)
+    def portal_quote_confirm(self, order_id, access_token=None):
+
+        # get from query string if not on json param
+        access_token = access_token or request.httprequest.args.get(
+            'access_token')
+        try:
+            order_sudo = self._document_check_access('sale.order',
+                                                     order_id,
+                                                     access_token=access_token)
+        except (AccessError, MissingError):
+            return {'error': _('Invalid order.')}
+
+        order_sudo.action_approve_quotation()
+        if(order_sudo.state == 'proof'):
+            allow_payment = '#allow_payment=no'
+        else:
+            allow_payment = '#allow_payment=yes'
+
+
+
+        query_string = '&message=proof_ok'
+        if order_sudo.has_to_be_paid(True):
+            query_string += allow_payment
+        return request.redirect(
+            order_sudo.get_portal_url(query_string=query_string))
