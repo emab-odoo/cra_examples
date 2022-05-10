@@ -74,6 +74,9 @@ class CustomerPortal(portal.CustomerPortal):
                     return {'error': _('Invalid signature data.')}
 
             else:
+                order_sudo.write({
+                    'state': 'proof'
+                })
                 for line in sale_order_lines:
                     if(line.id == modal_product_id):
                         resulting_line_info = line.product_id.display_name
@@ -82,6 +85,7 @@ class CustomerPortal(portal.CustomerPortal):
                     resulting_line_info, order_sudo.partner_id.display_name, request.env.user.email, reasons)
                 attachments = None
                 allow_payment = '#allow_payment=no'
+
 
             _message_post_helper('sale.order',
                                  order_sudo.id,

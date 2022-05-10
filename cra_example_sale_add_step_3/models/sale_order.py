@@ -8,6 +8,13 @@ from odoo import models, api, fields, _
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    # Best practice but the above issue is present, if you want, uncomment it and try it for ur self.
+
+    # state = fields.Selection(selection_add = [
+    #     ('proof', 'Proof'),
+    #     ('proof_sent', 'Proof Sent')
+    #     ])
+
     # Re declaration, for selection fields the field should be extended using selection_add as used below, but Odoo displays the states in the order in which they are declared, there is a way to define the order, but I'm researching how this is done.
     state = fields.Selection([('draft', 'Quotation'), ('sent', 'Quotation Sent'), ('proof', 'Upload Proof'), ('proof_sent', 'Proof Sent'),
                               ('sale', 'Sales Order'), ('done', 'Locked'),
@@ -47,7 +54,7 @@ class SaleOrder(models.Model):
     def proof_ready_for_approval(self):
         for line in self.order_line:
             if line.product_id.needs_proof:
-                if not line.proof_image:
+                if not line.proof_pdf:
                     return False
         return True
 
@@ -95,10 +102,3 @@ class SaleOrder(models.Model):
         return (
             self.state in allowed_states or (self.state == 'draft' and include_draft)
         ) and not self.is_expired and self.require_payment and transaction.state != 'done' and self.amount_total
-
-    # Best practice but the above issue is present, if you want, uncomment it and try it for ur self.
-
-    # state = fields.Selection(selection_add = [
-    #     ('proof', 'Proof'),
-    #     ('proof_sent', 'Proof Sent')
-    #     ])

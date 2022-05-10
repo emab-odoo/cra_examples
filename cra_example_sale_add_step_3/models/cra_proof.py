@@ -9,13 +9,18 @@ from odoo import models, api, fields, _
 class CRAProof(models.Model):
     _name = 'cra.proof'
 
-    proof_image = fields.Image("Proof Image",
-                               max_width=1920,
-                               max_height=1920,
-                               store=True)
+    # proof_image = fields.Image("Proof Image",
+    #                            max_width=1920,
+    #                            max_height=1920,
+    #                            store=True)
+    pdf_link = fields.Char("Proof Link", compute='get_proof_url')
+    proof_pdf = fields.Binary("Proof PDF", store=True, attachment=True)
     product_id = fields.Many2one('product.product', "Product", store=True)
 
     sale_order_line = fields.Many2one('sale.order.line', 'SOL', store=True)
+
+    def get_proof_url(self):
+        self.pdf_link = "http://localhost:8069/web/content/cra.proof/%s/proof_pdf/" % self.id
 
     def proof_wizard(self):
         view = self.env.ref('cra_example_sale_add_step_3.view_proof_wizard')
@@ -23,8 +28,8 @@ class CRAProof(models.Model):
         wiz = self.env['cra.proof.wizard'].create({
             'cra_proof':
             self.id,
-            'proof_image':
-            self.proof_image
+            'proof_pdf':
+            self.proof_pdf
         })
         # Creates action to display the wizard
         return {
@@ -39,7 +44,7 @@ class CRAProof(models.Model):
             'context': self.env.context,
         }
 
-    @api.depends('proof_image')
+    @api.depends('proof_pdf')
     def check_order_lines(self):
         self.sale_order_line.proof_ready = True
         if(self.sale_order_line.order_id.needs_proof):

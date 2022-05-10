@@ -33,6 +33,7 @@
                 <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
                     <field name="needs_proof" invisible='1'></field>
                     <button name="proof_wizard" t-attf-class="o_cra_test" string="Proof" type="object" attrs="{'invisible':['|',('needs_proof','=', False), ('state','not in', ['proof', 'proof_sent'])]}"></button>
+                    <field name="proof_pdf" widget='attachment' readonly='True' type="object" string='Download Proof' attrs="{'invisible':['|',('needs_proof','=', False), ('state','not in', ['proof', 'proof_sent'])]}"></field>
                 </xpath>
             </field>
         </record>

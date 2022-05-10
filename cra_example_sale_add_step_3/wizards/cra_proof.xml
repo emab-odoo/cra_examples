@@ -9,7 +9,9 @@
             <field name="arch" type="xml">
                 <form string="Proof">
                     <!-- Image -->
-                    <field name="proof_image" widget="image" string="helo" />
+                    <!-- <field name="proof_image" widget="image" string="helo" /> -->
+                    <field name="proof_pdf" filename="file_name" widget='attachment' readonly='False' string="helo"/>
+                    <field name="file_name" invisible="1" />
                     <footer>
                         <!-- Calls function save_proof on cra.proof -->
                         <button name="save_proof" string="Save" type="object" class="oe_highlight" />

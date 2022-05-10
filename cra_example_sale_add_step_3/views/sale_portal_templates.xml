@@ -11,9 +11,9 @@
         <xpath expr="//tbody/t[@t-foreach='sale_order.order_line']/tr//td[3]" position="after">
             <td name="td_proof" class="text-right">
                 <t t-if="line.needs_proof">
-                    <t t-if="line.proof_image">
-                        <a data-target="#exampleModal" data-toggle="modal" t-att-id='line.id' t-att-title='line.display_name' onclick="{
-                    document.getElementById('proof_image').src = '/web/image/sale.order.line/'+ this.id + '/proof_image';
+                    <t t-if="line.proof_pdf">
+                        <a data-target="#exampleModal" data-toggle="modal" t-att-id='line.id' t-att-href='line.cra_proof.pdf_link' t-att-title="line.display_name" onclick="{
+                    document.getElementById('proof_data').href = this.href;
                     document.getElementById('modal_title').innerHTML = this.title;
                     document.getElementById('modal_product_id').value = this.id;
                     }">See Proof</a>
@@ -106,7 +106,7 @@
                         </div>
                         <div class="modal-body">
                             <div>
-                                <img src="" id="proof_image" />
+                                <a href="" id="proof_data" target="_blank">Download Proof</a>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="approve" name="approve" value="True" onclick="{
