@@ -1,10 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="product_product_form_cra" model='ir.ui.view'>
+        <!-- In this case you can go two ways, inherit the view for the variant and add the needs_proof field after the categ_id, and do something very similar with product_template or (go to line 27) -->
+        <!-- <record id="product_product_form_cra" model='ir.ui.view'>
             <field name="name">product.product.form.inherit.cra</field>
             <field name="model">product.product</field>
             <field name="inherit_id" ref="product.product_normal_form_view" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='categ_id']" position="after">
+                    <field name="needs_proof"></field>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="product_template_form_view_cra" model='ir.ui.view'>
+            <field name="name">product.template.form.view.inherit.cra</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='categ_id']" position="after">
+                    <field name="needs_proof"></field>
+                </xpath>
+            </field>
+        </record> -->
+
+        <!-- If you look closely, both inherited views (product_normal_form_view, product_template_only_form_view) inherit the same father view (product_template_form_view), so if you inherit that view, you'll add the field to both views with less code.-->
+        <record id="product_template_form_view_cra" model='ir.ui.view'>
+            <field name="name">product.template.form.view.inherit.cra</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view" />
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='categ_id']" position="after">
                     <field name="needs_proof"></field>

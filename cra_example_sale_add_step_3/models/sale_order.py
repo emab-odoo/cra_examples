@@ -8,23 +8,10 @@ from odoo import models, api, fields, _
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    # Best practice but the above issue is present, if you want, uncomment it and try it for ur self.
-
-    # state = fields.Selection(selection_add = [
-    #     ('proof', 'Proof'),
-    #     ('proof_sent', 'Proof Sent')
-    #     ])
-
-    # Re declaration, for selection fields the field should be extended using selection_add as used below, but Odoo displays the states in the order in which they are declared, there is a way to define the order, but I'm researching how this is done.
-    state = fields.Selection([('draft', 'Quotation'), ('sent', 'Quotation Sent'), ('proof', 'Upload Proof'), ('proof_sent', 'Proof Sent'),
-                              ('sale', 'Sales Order'), ('done', 'Locked'),
-                              ('cancel', 'Cancelled')],
-                             string='Status',
-                             readonly=True,
-                             copy=False,
-                             index=True,
-                             tracking=3,
-                             default='draft')
+    # Best practice, new states are defined, and the last tuple, is to determine where to add them, so proof, and proof_sent are added before the sale state, resulting in ('draft', 'Quotation'), ('sent', 'Quotation Sent'), ('proof', 'Upload Proof'), ('proof_sent', 'Proof Sent'),('sale', 'Sales Order'), ('done', 'Locked'), ('cancel', 'Cancelled')
+    state = fields.Selection(selection_add=[
+        ('proof', 'Upload Proof'), ('proof_sent', 'Proof Sent'), ('sale',)
+    ])
 
     proof_validated = fields.Boolean('Is the Proof Validated',
                                      copy=False,
@@ -86,7 +73,6 @@ class SaleOrder(models.Model):
         self.write({'state': 'proof_sent'})
         return self.action_quotation_send()
 
-
     def has_to_be_signed(self, include_draft=False):
         allowed_states = ['proof_sent', 'proof']
         if not self.needs_proof:
@@ -100,5 +86,6 @@ class SaleOrder(models.Model):
         transaction = self.get_portal_last_transaction()
         print(transaction)
         return (
-            self.state in allowed_states or (self.state == 'draft' and include_draft)
+            self.state in allowed_states or (
+                self.state == 'draft' and include_draft)
         ) and not self.is_expired and self.require_payment and transaction.state != 'done' and self.amount_total

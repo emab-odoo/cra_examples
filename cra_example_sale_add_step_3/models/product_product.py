@@ -10,6 +10,5 @@ from odoo import models, fields, _
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
-    needs_proof = fields.Boolean(string='Needs Proof',
-                                 default=False,
-                                 store=True)
+    needs_proof = fields.Boolean(related='product_tmpl_id.needs_proof', string='Needs Proof',
+                                 store=False)

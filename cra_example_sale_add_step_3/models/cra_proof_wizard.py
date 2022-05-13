@@ -8,6 +8,7 @@ from odoo import models, api, fields, _
 
 class CRAProofWizard(models.TransientModel):
     _name = 'cra.proof.wizard'
+    _description = "Wizard to upload a proof and add it to the cra.proof model."
 
     cra_proof = fields.Many2one('cra.proof', "CRA Proof", required=True)
     proof_pdf = fields.Binary("Proof pdf", attachment=False)

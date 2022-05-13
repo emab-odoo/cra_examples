@@ -8,6 +8,7 @@ from odoo import models, api, fields, _
 
 class CRAProof(models.Model):
     _name = 'cra.proof'
+    _description = "CRA custom model to store proofs for sale orders and MOs."
 
     # proof_image = fields.Image("Proof Image",
     #                            max_width=1920,

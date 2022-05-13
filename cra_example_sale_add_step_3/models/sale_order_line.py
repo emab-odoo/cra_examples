@@ -7,10 +7,6 @@ from odoo.exceptions import UserError
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
-    # proof_image = fields.Image("Proof Image",
-    #                            max_width=1920,
-    #                            max_height=1920,
-    #                            related='cra_proof.proof_image')
     proof_pdf = fields.Binary("Proof PDF", related='cra_proof.proof_pdf')
     needs_proof = fields.Boolean('product.product',
                                  related='product_id.needs_proof')
