@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+	    <!-- adding xpath to the product 'template' form to notate whether or not there's a need for the sale order line to require the needs_proof logic and proof process -->    
+	<record id="product_product_form_cra" model='ir.ui.view'>
+            <field name="name">product.product.form.inherit.cra</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='categ_id']" position="after">
+                    <field name="needs_proof"></field>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

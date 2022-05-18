@@ -8,23 +8,18 @@ from odoo import models, api, fields, _
 
 class CRAProof(models.Model):
     _name = 'cra.proof'
-    _description = "CRA custom model to store proofs for sale orders and MOs."
+    _description = 'This model creates proof wizard to store the proof pdf for sale orders and manufacturing orders'
 
-    # proof_image = fields.Image("Proof Image",
-    #                            max_width=1920,
-    #                            max_height=1920,
-    #                            store=True)
-    pdf_link = fields.Char("Proof Link", compute='get_proof_url')
+    pdf_link = fields.Char("Proof Link", compute='get_portal_url')
     proof_pdf = fields.Binary("Proof PDF", store=True, attachment=True)
     product_id = fields.Many2one('product.product', "Product", store=True)
-
     sale_order_line = fields.Many2one('sale.order.line', 'SOL', store=True)
 
-    def get_proof_url(self):
-        self.pdf_link = "/web/content/cra.proof/" + str(self.product_id) + "/proof_pdf/"
-        
+    def get_portal_url(self):
+        self.pdf_link = "/web/content/cra.proof/"+str(self.id)+"/proof_pdf/"
+
     def proof_wizard(self):
-        view = self.env.ref('cra_example_sale_add_step_3.view_proof_wizard')
+        view = self.env.ref('proofprocess.view_proof_wizard')
         # Calls create method on cra.proof, and passes the sale_order_line as well as the proof image if there is any.
         wiz = self.env['cra.proof.wizard'].create({
             'cra_proof':

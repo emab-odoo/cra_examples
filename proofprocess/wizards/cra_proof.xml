@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding='utf-8'?>
+<!-- Good practice -->
+<odoo>
+    <data>
+        <!-- New form view for the wizard -->
+        <record id="view_proof_wizard" model="ir.ui.view">
+            <field name="name">Proof</field>
+            <field name="model">cra.proof.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Proof">
+                    <!-- Image -->
+		    <field name="proof_pdf" fielname="file_name" widget='attachment' readonly='False' string='helo'/>
+		    <field name="file_name" invisible="1" />
+                    <footer>
+                        <!-- Calls function save_proof on cra.proof -->
+                        <button name="save_proof" string="Save" type="object" class="oe_highlight" />
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
