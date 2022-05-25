@@ -15,7 +15,7 @@
     'depends': ['proofprocess', 'mrp'],
 
     'data': [
-
+        'views/mrp_production_views.xml'
     ],
 
     'demo': [
