@@ -1,2 +1,2 @@
 # -*- coding: utf-8 -*-
-from . import sale_order, mrp_production
+from . import sale, mrp_production
