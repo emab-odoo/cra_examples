@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<!-- companyName_originalViewExternalId_inherit -->
+		<record id="res_partner_form_view_cra" model='ir.ui.view'>
+			<!-- companyName_originalViewExternalId.inherit -->
+			<field name="name">res.partner.form.view.cra</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="base.view_partner_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='vat']" position="after">
+					<field name="credit_check_file" wizard="pdf_viewer"></field>
+					<field name="credit_status" readonly="1"></field>
+					<field name="latest_paid_invoice" readonly="1"></field>
+				</xpath>
+			</field>
+		</record>
+	</data>
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding='utf-8'?>
+<!-- Good practice -->
+<odoo>
+    <data>
+        <!-- Good practice: for the id try to use: companyName_originalViewExternalId_inherit -->
+        <record id="cra_view_order_form_inherit" model='ir.ui.view'>
+            <!-- Good practice: for the name try to use: companyName.originalViewExternalId.inherit -->
+            <field name="name">cra.view.order.form.inherit</field>
+            <!-- model that the view uses.-->
+            <field name="model">sale.order</field>
+            <!--External ID of the OG view.-->
+            <field name="inherit_id" ref="sale.view_order_form" />
+            <!--field type to search inside the original view using xpath-->
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_cancel']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('state', 'not in', ['draft', 'sent','sale', 'proof','proof_sent']), ('id', '=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_send_proof']" position="after">
+                    <button name="action_approve_credit_check" t-attf-class="o_cra_test" string="Confirm Credit Check" type="object" attrs="{'invisible':[('state','not in', ['cred_check'])]}"></button>
+                </xpath>
+                <!--Find the field with name state, and replace it with the field state with different statusbar_visible elements (proof is declared on the model.)-->
+                <xpath expr="//field[@name='state']" position="replace">
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,cred_check,quot_approve,credit_check,proof,proof_sent,sale" />
+                </xpath>
+                <xpath expr="//field[@name='sale_order_template_id']" position="after">
+                    <field name="credit_check_file" />
+                    <field name="credit_status" readonly="1"/>
+                    <field name="property_payment_term_id"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

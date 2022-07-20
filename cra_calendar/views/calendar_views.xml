@@ -1,0 +1,18 @@
+<odoo>
+	<data>
+	<record id="view_calendar_event_form_cra" model="ir.ui.view">
+			<field name="name">view.calendar.event.form.cra</field>
+			<field name="model">calendar.event</field>
+			<field name="inherit_id" ref="calendar.view_calendar_event_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//form/sheet/notebook/page/group[2]" position="after">
+				<!-- TODO: add data from model to calender add view -->
+					<field name="completion_method"></field>
+					<field name="completion_notes"></field>
+					<field name="partner_id"></field>
+					<field name="sale_order_id"></field>
+				</xpath>
+			</field>
+	</record>
+	</data>
+</odoo>

@@ -17,7 +17,7 @@
     'version': '0.1',
     'license': 'LGPL-3',
 
-    'depends': ['sale_management', 'portal', 'web'],
+    'depends': ['base', 'sale_management', 'portal', 'web'],
 
     'data': [
         'views/sale_views.xml',

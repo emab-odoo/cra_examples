@@ -14,21 +14,32 @@
             <field name="arch" type="xml">
                 <!-- <xpath expr="//button[@name='action_quotation_send']" position="replace">
                     <button name="action_quotation_send" string="Send by Email" type="object" states="proof" class="btn-primary" data-hotkey="g" />
-                </xpath> -->
-                <xpath expr="//button[@name='action_confirm'][2]" position="replace">
+		</xpath> -->
+		<!-- TODO : add related contact_creditcheck under partner_id on search -->
+		<!--	
+		<xpath expr="//field[@name='partner_id']" position="after">
+			<field name="credit_check_file"/>
+		</xpath>
+		<xpath expr="//button[@name='action_confirm'][2]" position="replace">
                     <button name="action_confirm" id="action_confirm" data-hotkey="v" string="Confirm" states="proof_sent" class="btn-primary" type="object" attrs="{'invisible': [('state', 'not in', ['dratf'])]}" hidden='True'/>
-                </xpath>
+	    	</xpath>
+			<xpath expr"//buton[@name='action_confirm'] />
+		</xpath>
+		-->
                 <xpath expr="//button[@name='action_confirm'][1]" position="replace">
                     <button name="action_confirm" id="action_confirm" data-hotkey="v" string="Confirm" class="btn-primary" type="object" attrs="{'invisible': [('state', 'not in', ['proof_sent'])]}"/>
                     <button name="action_approve_quotation" id="action_approve_quotation" data-hotkey="v" string="Confirm Quotation" class="btn-primary" type="object" attrs="{'invisible': [('state', 'not in', ['sent'])]}"/>
                     <button name="action_send_proof" t-attf-class="o_cra_test" string="Send Proof" type="object" attrs="{'invisible':[('state','not in', ['proof'])]}"></button>
+                </xpath>
+                <xpath expr="//button[@name='action_confirm'][2]" position="replace">
+                    <button name="action_confirm" data-hotkey="v" string="Confirm" type="object" attrs="{'invisible': [('state', 'not in', ['proof_sent'])]}"/>
                 </xpath>
                 <xpath expr="//button[@name='action_cancel']" position="attributes">
                     <attribute name="attrs">{'invisible': ['|', ('state', 'not in', ['draft', 'sent','sale', 'proof','proof_sent']), ('id', '=', False)]}</attribute>
                 </xpath>
                 <!--Find the field with name state, and replace it with the field state with different statusbar_visible elements (proof is declared on the model.)-->
                 <xpath expr="//field[@name='state']" position="replace">
-                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,quot_approve,proof,proof_sent,sale" />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,sent,quot_approve,credit_check,proof,proof_sent,sale" />
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
                     <field name="needs_proof" invisible='1'></field>
