@@ -1,4 +1,4 @@
-# -- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from email.policy import default
 from tracemalloc import stop
@@ -9,10 +9,20 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     # Re declaration, for selection fields the field should be extended using selection_add as used below, but Odoo displays the states in the order in which they are declared, there is a way to define the order, but I'm researching how this is done.
-
+    # TODO: create a 'Project Name' field that captures the project name and present in mrp and calendar views
     state = fields.Selection(selection_add=[('proof', 'Upload Proof'), ('proof_sent', 'Proof Sent'), ('sale', )], )
+    project_name = fields.Char(string='Project Name', store=True)
     proof_validated = fields.Boolean('Is the Proof Validated', copy=False, default=False, store=True)
     needs_proof = fields.Boolean('Needs proof', compute='check_if_so_needs_proof')
+    # related = 'root related value. field you're relating 
+    completion_method = fields.Selection(selection=[('deliver', 'Delivery'), ('ship', 'Shipping'), ('pick', 'Pick Up'), ('install', 'Installation')], string='Completion Method')
+    customer_exp_date = fields.Datetime(string='Customer Expected Date', store=True, help='Date the customer expects the products to be recieved [delivered, installed, picked up, etc]')
+    completion_date = fields.Date(string='Due Date', store=True, help='Date the manufactured products should be ready and on the shelf for last mile logistics')
+    completion_notes = fields.Text(string='Notes', store=True)
+    
+    # TODO: Adding sale order -> create calendar event for later
+    # self.env['calendar.event'].create(vals_list)
+    # {'completion_method':self.completion_method}
 
 
     @api.onchange('order_line')
@@ -58,12 +68,6 @@ class SaleOrder(models.Model):
         self.proof_validated = sale_order_proof_validated
         return sale_order_proof_validated
   
-    # TODO: build credit_status_check
-    # Important notes:
-    def credit_status_check(self):
-        if (self.credit_status):
-            self.write({'state': 'proof'})
-
     # moves state into proof status
     def action_approve_quotation(self):
         self.check_if_so_needs_proof()
@@ -104,9 +108,3 @@ class SaleOrder(models.Model):
             self.state in allowed_states or (self.state == 'draft' and include_draft)
         ) and not self.is_expired and self.require_payment and transaction.state != 'done' and self.amount_total
 
-    # Best practice but the above issue is present, if you want, uncomment it and try it for ur self.
-
-    # state = fields.Selection(selection_add = [
-    #     ('proof', 'Proof'),
-    #     ('proof_sent', 'Proof Sent')
-    #     ])*

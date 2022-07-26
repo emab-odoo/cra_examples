@@ -8,6 +8,32 @@
         <xpath expr="//thead//th[3]" position="after">
             <th name="th_proof" class="text-right">Proof</th>
         </xpath>
+	<!-- replace the table values to include ordered quantity and dimension -->
+	<!-- origin lines: [427] -->
+	<xpath expr="//section/table/thead/tr/th[2]" position="replace">
+		<th class="text-right">Quantity</th>
+		<th class="text:right">Dimensions</th>
+	</xpath>
+	<!-- removing the Unit Price table header -->
+	<xpath expr="//section/table/thead/tr/th[4]" position="replace">
+	</xpath>
+	<!-- replace qty ordered and dimension with line.product_uom_qty and line.product_uom -->
+	<!-- origin lines: [453:456] -->
+	<xpath expr="//tbody/t[@t-foreach='sale_order.order_line']/tr//td[2]" position="replace">
+	    <td class="text-right">
+	    	<div id="quote_qty">	
+		    <span t-field="line.order_line_qty"/>
+		</div>
+	    </td>
+	    <td class="text:right">
+		<div id="dims">
+		    <span t-field="line.dimensions"/>
+		</div>
+	    </td>
+        </xpath>
+    	<!-- removing the Unit Price in table -->
+	<xpath expr="//section/table/tbody/t/tr/t/td[4]" position="replace">
+	</xpath>
         <xpath expr="//tbody/t[@t-foreach='sale_order.order_line']/tr//td[3]" position="after">
             <td name="td_proof" class="text-right">
                 <t t-if="line.needs_proof">
