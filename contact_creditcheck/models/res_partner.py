@@ -1,5 +1,4 @@
-import requests
-from odoo import api, fields, models, tools, SUPERUSER_ID, _, Command
+from odoo import api, fields, models
 
 class Partner(models.Model):
     _inherit = 'res.partner'
@@ -16,10 +15,10 @@ class Partner(models.Model):
         latest_invoice = False
         latest_invoice_date = False
         inmediate_payment = True if self.property_payment_term_id.name == "Immediate Payment" else False
-        
         for invoice in self.invoice_ids:
             if invoice.invoice_date:
-                if(invoice.payment_state != 'paid'):
+                # print(fields.Date.context_today(self), invoice.invoice_date_due)
+                if(invoice.payment_state != 'paid' and invoice.invoice_date_due >= fields.Date.context_today(self)):
                     invoices_paid = False
                     break
                 else:
@@ -41,5 +40,5 @@ class Partner(models.Model):
             if not child.credit_status:
                 result = False
                 break
-            
+
         self.credit_status = result
