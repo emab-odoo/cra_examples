@@ -4,12 +4,13 @@ from odoo import api, fields, models, tools, SUPERUSER_ID, _, Command
 class Partner(models.Model):
     _inherit = 'res.partner'
     
-    credit_check_file = fields.Binary("Credit Check File", store=True, attachment=True) 
+    credit_check_file = fields.Binary("Credit Check File", store=True, attachment=True)
+    parent_credit_check_file = fields.Binary("Credit Check File", related='parent_id.credit_check_file', attachment=True)
     credit_status = fields.Boolean("Credit Status", compute="compute_credit_status")
     latest_paid_invoice = fields.Many2one(string="Latest Paid Invoice", comodel_name="account.move")
 
     def compute_credit_status(self):
-        credit_check_file = True if self.credit_check_file else False
+        credit_check_file = True if (self.credit_check_file or self.parent_credit_check_file) else False
         invoices_paid = True
         result = False
         latest_invoice = False
@@ -28,11 +29,17 @@ class Partner(models.Model):
                     else:
                         latest_invoice_date = invoice.invoice_date if(latest_invoice_date < invoice.invoice_date) else latest_invoice_date
                         latest_invoice = invoice if(latest_invoice_date <= invoice.invoice_date) else latest_invoice
-        if(inmediate_payment and invoices_paid and latest_invoice):
+        if inmediate_payment and invoices_paid and latest_invoice:
             self.latest_paid_invoice = latest_invoice
             result = True
         else:
-            if(credit_check_file and invoices_paid):
+            if credit_check_file and invoices_paid:
                 self.latest_paid_invoice = latest_invoice
                 result = True
+
+        for child in self.child_ids:
+            if not child.credit_status:
+                result = False
+                break
+            
         self.credit_status = result

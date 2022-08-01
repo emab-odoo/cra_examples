@@ -23,7 +23,6 @@ class SaleOrder(models.Model):
                     'start': self.customer_exp_date,
                     'stop': self.customer_exp_date + relativedelta(hours=1)
                 })
-            print(vals_list, self.customer_exp_date)
             #Call the create method of the calendar.event, passing the list of dictionaries, each dictionary = new record.
             self.env['calendar.event'].create(vals_list)
         return res
