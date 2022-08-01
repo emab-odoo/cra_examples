@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from email.policy import default
 from odoo import models, api, fields, _
+from odoo.exceptions import UserError
+from dateutil.relativedelta import relativedelta
 
 
 class SaleOrder(models.Model):
@@ -12,15 +13,17 @@ class SaleOrder(models.Model):
         res = super().action_confirm()
         #List of dictionaries with values desired for creation
         vals_list = []
-        #Since we need info from sale order lines, we iterate over them, also, I believe the idea is to create an event for each of the products that need proof.
-        for line in self.order_line:
-            if line.needs_proof:
-                #KEY = field_name, #Value = field_value, only name (description) is required, but here you could pass other fields, such as the date and time of the event, etc...
-                vals_list.append({
+        #Since we need info from sale order lines, we iterate over them, also, I believe the idea is to create an event for each of the products that need proof.\
+        if self.completion_method == 'deliver' or self.completion_method == 'install':
+            if not self.customer_exp_date:
+                raise UserError('For a calendar event to be created, customer expected date must be set.')
+            vals_list.append({
                     'sale_order_id': self.id,
-                    'sale_order_line_id': line.id,
-                    'name':self.partner_id.name + " " + line.name
+                    'name':self.partner_id.name + " ",
+                    'start': self.customer_exp_date,
+                    'stop': self.customer_exp_date + relativedelta(hours=1)
                 })
-        #Call the create method of the calendar.event, passing the list of dictionaries, each dictionary = new record.
-        self.env['calendar.event'].create(vals_list)
+            print(vals_list, self.customer_exp_date)
+            #Call the create method of the calendar.event, passing the list of dictionaries, each dictionary = new record.
+            self.env['calendar.event'].create(vals_list)
         return res
